@@ -1,0 +1,64 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: SAAS
+      id: saas
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: SAAS
+        setup-command: npm install
+        command: npm test
+        timeout: 10
+        max-score: 50
+    - name: Sample_shopping_app
+      id: sample_shopping_app
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Sample_shopping_app
+        setup-command: ''
+        command: gradle test
+        timeout: 10
+        max-score: 100
+    - name: Build SEO(Search Engine Optimization)
+      id: build-seo-search-engine-optimization
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 50
+        setup-command: ''
+    - name: Managing database using MySql server
+      id: managing-database-using-mysql-server
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 50
+        setup-command: ''
+    - name: Data Analysis report
+      id: data-analysis-report
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 100
+        setup-command: ''
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        SAAS_RESULTS: "${{steps.saas.outputs.result}}"
+        SAMPLE_SHOPPING_APP_RESULTS: "${{steps.sample_shopping_app.outputs.result}}"
+        BUILD-SEO-SEARCH-ENGINE-OPTIMIZATION_RESULTS: "${{steps.build-seo-search-engine-optimization.outputs.result}}"
+        MANAGING-DATABASE-USING-MYSQL-SERVER_RESULTS: "${{steps.managing-database-using-mysql-server.outputs.result}}"
+        DATA-ANALYSIS-REPORT_RESULTS: "${{steps.data-analysis-report.outputs.result}}"
+      with:
+        runners: saas,sample_shopping_app,build-seo-search-engine-optimization,managing-database-using-mysql-server,data-analysis-report
